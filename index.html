@@ -49,6 +49,8 @@
             z-index: 0;
             opacity: 0.03;
             pointer-events: none;
+            transform: translateZ(0);
+            will-change: transform;
         }
 
         .bg-circle {
@@ -56,6 +58,7 @@
             border-radius: 50%;
             background: var(--accent);
             animation: float 20s infinite ease-in-out;
+            will-change: transform;
         }
 
         .bg-circle:nth-child(1) {
@@ -206,6 +209,45 @@
             background: radial-gradient(circle at 30% 50%, rgba(108, 99, 255, 0.15) 0%, transparent 50%),
                         radial-gradient(circle at 70% 50%, rgba(139, 127, 255, 0.1) 0%, transparent 50%);
             z-index: 0;
+            will-change: transform;
+        }
+
+        .parallax-layer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .parallax-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), rgba(139, 127, 255, 0.05));
+            will-change: transform;
+        }
+
+        .parallax-circle-1 {
+            width: 400px;
+            height: 400px;
+            top: 10%;
+            left: 5%;
+            opacity: 0.3;
+        }
+
+        .parallax-circle-2 {
+            width: 300px;
+            height: 300px;
+            bottom: 15%;
+            right: 10%;
+            opacity: 0.2;
+        }
+
+        .parallax-circle-3 {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            right: 20%;
+            opacity: 0.15;
         }
 
         .hero-content {
@@ -362,6 +404,9 @@
             border: 1px solid rgba(255, 255, 255, 0.05);
             position: relative;
             overflow: hidden;
+            transition: transform 0.3s ease;
+            transform-style: preserve-3d;
+            perspective: 1000px;
         }
 
         .profile-card::before {
@@ -490,6 +535,7 @@
             position: relative;
             opacity: 0;
             animation: projectSlideIn 0.6s ease forwards;
+            z-index: 1;
         }
 
         .project-card:nth-child(1) { animation-delay: 0.1s; }
@@ -516,6 +562,8 @@
             background: linear-gradient(135deg, rgba(108, 99, 255, 0.1), transparent);
             opacity: 0;
             transition: opacity 0.4s ease;
+            pointer-events: none;
+            z-index: 0;
         }
 
         .project-card:hover {
@@ -532,6 +580,7 @@
             padding: 2rem;
             background: var(--surface-light);
             position: relative;
+            z-index: 1;
         }
 
         .project-icon {
@@ -560,6 +609,8 @@
 
         .project-body {
             padding: 2rem;
+            position: relative;
+            z-index: 1;
         }
 
         .project-card h3 {
@@ -584,6 +635,9 @@
             font-weight: 600;
             font-size: 0.95rem;
             transition: all 0.3s ease;
+            position: relative;
+            z-index: 2;
+            cursor: pointer;
         }
 
         .project-link:hover {
@@ -1006,8 +1060,18 @@
         </div>
     </nav>
 
+    <!-- Hero Section -->
     <section id="home">
         <div class="hero-gradient"></div>
+        <div class="parallax-layer" data-speed="0.5">
+            <div class="parallax-circle parallax-circle-1"></div>
+        </div>
+        <div class="parallax-layer" data-speed="0.3">
+            <div class="parallax-circle parallax-circle-2"></div>
+        </div>
+        <div class="parallax-layer" data-speed="0.7">
+            <div class="parallax-circle parallax-circle-3"></div>
+        </div>
         <div class="hero-content">
             <div class="hero-text">
                 <h1>
@@ -1043,8 +1107,8 @@
             </div>
         </div>
     </section>
-    
- <!-- Projects Section -->
+
+    <!-- Projects Section -->
     <section id="projects">
         <div class="container">
             <div class="section-header">
@@ -1153,7 +1217,7 @@
             </div>
         </div>
     </section>
-    
+
     <!-- About Section -->
     <section id="about">
         <div class="container">
@@ -1167,7 +1231,7 @@
                     
                     <p>I specialize in Swift and iOS development, with a strong foundation in computer science fundamentals including operating systems and algorithms. I love tackling challenging problems and transforming complex requirements into elegant, user-friendly solutions.</p>
                     
-                    <p>Based in Dallas, I'm always exploring new technologies and best practices to deliver high-quality mobile applications. When I'm not coding, you'll find me staying active, learning about the latest iOS features, or contributing to the developer community.</p>
+                    <p>I'm always exploring new technologies and best practices to deliver high-quality mobile applications. When I'm not coding, you'll find me staying active, learning about the latest iOS features, or contributing to the developer community.</p>
                 </div>
                 <div>
                     <div class="skills-section">
@@ -1231,7 +1295,7 @@
                     <h3>Let's Connect</h3>
                     <p>Feel free to reach out through any of these platforms. I'm always interested in discussing new projects, creative ideas, or opportunities to collaborate.</p>
                     <div class="contact-methods">
-                        <a href="https://www.linkedin.com/in/srivalli-kanchibotla-85500882/" class="contact-method" target="_blank">
+                        <a href="https://linkedin.com/in/yourprofile" class="contact-method" target="_blank">
                             <div class="contact-icon">💼</div>
                             <div class="contact-details">
                                 <h4>LinkedIn</h4>
@@ -1265,6 +1329,51 @@
     </footer>
 
     <script>
+        // Parallax Effect
+        let parallaxLayers = document.querySelectorAll('.parallax-layer');
+        let heroGradient = document.querySelector('.hero-gradient');
+        
+        window.addEventListener('scroll', () => {
+            let scrolled = window.pageYOffset;
+            
+            // Parallax for hero gradient
+            if (heroGradient && scrolled < window.innerHeight) {
+                heroGradient.style.transform = `translateY(${scrolled * 0.5}px)`;
+            }
+            
+            // Parallax for decorative circles
+            parallaxLayers.forEach(layer => {
+                if (scrolled < window.innerHeight) {
+                    let speed = layer.getAttribute('data-speed');
+                    layer.style.transform = `translateY(${scrolled * speed}px)`;
+                }
+            });
+        });
+
+        // Mouse parallax effect for hero section
+        let heroSection = document.getElementById('home');
+        let profileCard = document.querySelector('.profile-card');
+        
+        heroSection.addEventListener('mousemove', (e) => {
+            let xAxis = (window.innerWidth / 2 - e.pageX) / 50;
+            let yAxis = (window.innerHeight / 2 - e.pageY) / 50;
+            
+            if (profileCard) {
+                profileCard.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            }
+            
+            parallaxLayers.forEach((layer, index) => {
+                let speed = (index + 1) * 0.02;
+                layer.style.transform = `translate(${e.pageX * speed}px, ${e.pageY * speed}px)`;
+            });
+        });
+        
+        heroSection.addEventListener('mouseleave', () => {
+            if (profileCard) {
+                profileCard.style.transform = 'rotateY(0deg) rotateX(0deg)';
+            }
+        });
+
         // Mobile Navigation Toggle
         const mobileToggle = document.querySelector('.mobile-toggle');
         const navLinks = document.querySelector('.nav-links');
